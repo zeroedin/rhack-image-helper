@@ -12,8 +12,6 @@ export class RhackImageHelper extends LitElement {
     super.connectedCallback();
   }
 
-
-
   render() {
     return html`
       <div id="container">
