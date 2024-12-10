@@ -4,12 +4,21 @@ import { property } from 'lit/decorators.js';
 
 import styles from './rhack-image-helper.css';
 
-@customElement('rhack-iamge-helper')
+@customElement('rhack-image-helper')
 export class RhackImageHelper extends LitElement {
   static styles = [styles];
 
+  connectedCallback(): void {
+    super.connectedCallback();
+  }
+
+
+
   render() {
     return html`
+      <div id="container">
+        Contents
+      </div>
     `;
   }
 }
