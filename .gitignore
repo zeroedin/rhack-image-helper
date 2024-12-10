@@ -34,7 +34,6 @@ custom-elements.json
 **/*.js.map
 **/*.js
 
-
 !declaration.d.ts
 !eslint.config.js
 !custom-elements.json
