@@ -31,9 +31,17 @@ storybook-static
 custom-elements.json
 
 **/*.d.ts
-!declaration.d.ts
 **/*.js.map
 **/*.js
+
+
+!declaration.d.ts
+!eslint.config.js
+!custom-elements.json
+!web-dev-server.config.js
+!web-test-runner.config.js
+
+!.vscode
 
 !declarations.d.ts
 tsconfig.tsbuildinfo
