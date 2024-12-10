@@ -42,7 +42,6 @@ export class RhackDrawer  extends LitElement {
   close() {
     this.open = false;
   }
-
 }
 
 

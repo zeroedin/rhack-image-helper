@@ -21,10 +21,11 @@ export class RhackImageHelper extends LitElement {
 
   render() {
     return html`
+      <rh-button @click=${() => this.toggle()}>Help</rh-button>
       <rhack-drawer>
         Contents
       </rhack-drawer>
-      <rh-button @click=${() => this.toggle()}>Help</rh-button>
+
     `;
   }
 

@@ -81,11 +81,12 @@
       }
     }
 
-    &:not(.open) {
+    &.closed {
       #panel {
         animation-name: animate-inline;
         animation-play-state: running;
         animation-direction: reverse;
+        opacity: 0;
       }
     }
   }
@@ -108,12 +109,14 @@
     }
   }
 
-  #overlay {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background-color: oklch(from var(--rh-color-gray-90, #1f1f1f) l c h / var(--rh-opacity-80, 80%));
-    pointer-events: all;
+  &.open {
+    #overlay {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background-color: oklch(from var(--rh-color-gray-90, #1f1f1f) l c h / var(--rh-opacity-80, 80%));
+      pointer-events: all;
+    }
   }
 }
 
