@@ -1,0 +1,7 @@
+@layer reset, tokens, fonts, typography;
+
+@import url(https://ux.redhat.com/styles/reset.css) layer(reset);
+@import url(https://ux.redhat.com/assets/packages/@rhds/tokens/css/global.css)
+layer(tokens);
+@import url(https://ux.redhat.com/styles/fonts.css) layer(fonts);
+@import url(https://ux.redhat.com/styles/typography.css) layer(typography);
