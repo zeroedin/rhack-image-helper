@@ -74,3 +74,9 @@ textarea {
   width: calc(100% - 0.5rem * 2);
   padding: 0.5rem /* non standard 8px on a 16px base rem*/
 }
+
+#translate form {
+  display: flex;
+  gap: var(--rh-space-md, 8px);
+  flex-direction: column;
+}

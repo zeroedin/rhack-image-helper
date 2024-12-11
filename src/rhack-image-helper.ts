@@ -121,15 +121,15 @@ export class RhackImageHelper extends LitElement {
         <rh-icon slot="header" icon="ai-ml"></rh-icon>
         <h2 slot="header">
           How can I help?</h2>
-        <details name="ai-suggest">
+        <details name="ai-suggest" id="title">
           <summary>Suggest Page Title</summary>
           <div>
             <rh-button @click=${() => this.#query('title')}>Read Page</rh-button>
-            <p>Select åa specific content region</p>
+            <p>Select a specific content region</p>
             <rh-button>Content Region</rh-button>
           </div>
         </details>
-        <details name="ai-suggest">
+        <details name="ai-suggest" id="summary">
           <summary>Suggest Page Summary</summary>
           <div>
             <rh-button @click=${() => this.#query('summary')}>Read Page</rh-button>
@@ -137,7 +137,7 @@ export class RhackImageHelper extends LitElement {
             <rh-button>Content Region</rh-button>
           </div>
         </details>
-        <details name="ai-suggest">
+        <details name="ai-suggest" id="taxonomy">
           <summary>Suggest Taxonomy</summary>
           <div>
             <rh-button @click=${() => this.#query('taxonomy')}>Read Page</rh-button>
@@ -145,7 +145,7 @@ export class RhackImageHelper extends LitElement {
             <rh-button>Content Region</rh-button>
           </div>
         </details>
-        <details name="ai-suggest">
+        <details name="ai-suggest" id="image">
           <summary>Generate Image</summary>
           <div>
             <textarea rows="10" placeholder="Add a custom prompt.\n\nExample: An image of a user standing at a desktop computer analyzing chart data in line art design using only 4 colors, white, black, red, and grey."></textarea>
@@ -154,23 +154,25 @@ export class RhackImageHelper extends LitElement {
             <rh-button>Content Region</rh-button>
           </div>
         </details>
-        <details name="ai-suggest">
+        <details name="ai-suggest" id="translate">
           <summary>Translate</summary>
           <div>
-            <label for="language">Select language to translate to</label>
-            <select id="language" ?disabled="${this.#loading}">
-              <option value="">Select an option</option>
-              <option value="Chinese">Chinese</option>
-              <option value="French">French</option>
-              <option value="German">German</option>
-              <option value="Italian">Italian</option>
-              <option value="Japanese">Japanese</option>
-              <option value="Korean">Korean</option>
-              <option value="Spanish">Spanish</option>
-            </select>
-            <label for="content">Copy Text to translate</label>
-            <textarea id="content" rows="10" placeholder="Copy text to translate"></textarea>
-            <rh-button @click=${() => this.#query('translate')}>Translate</rh-button>
+            <form>
+              <label for="language">Select language to translate to</label>
+              <select id="language" ?disabled="${this.#loading}">
+                <option value="">Select an option</option>
+                <option value="Chinese">Chinese</option>
+                <option value="French">French</option>
+                <option value="German">German</option>
+                <option value="Italian">Italian</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Korean">Korean</option>
+                <option value="Spanish">Spanish</option>
+              </select>
+              <label for="content">Copy Text to translate</label>
+              <textarea id="content" rows="10" placeholder="Copy text to translate"></textarea>
+              <rh-button @click=${() => this.#query('translate')}>Translate</rh-button>
+            </form>
           </div>
         </details>
       </rhack-drawer>
