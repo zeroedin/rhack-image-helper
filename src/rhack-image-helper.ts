@@ -14,6 +14,7 @@ export class RhackImageHelper extends LitElement {
   static styles = [styles];
 
   @query('rhack-drawer') drawer!: RhackDrawer;
+  @query('rh-button') trigger!: RhackDrawer;
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -21,8 +22,8 @@ export class RhackImageHelper extends LitElement {
 
   render() {
     return html`
-      <rh-button @click=${() => this.toggle()}>Help</rh-button>
-      <rhack-drawer>
+      <rh-button @click=${() => this.toggle()} aria-expanded="false" aria-controls="drawer">Help</rh-button>
+      <rhack-drawer id="drawer">
         Contents
       </rhack-drawer>
 
@@ -31,6 +32,7 @@ export class RhackImageHelper extends LitElement {
 
   toggle() {
     this.drawer.open = !this.drawer.open;
+    this.trigger.ariaExpanded = String(this.drawer.open);
   }
 }
 
