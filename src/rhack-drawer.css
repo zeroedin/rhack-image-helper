@@ -120,6 +120,13 @@
   }
 }
 
+[part="header"] {
+  display: flex;
+  flex-direction: row;
+  gap: var(--rh-space-md, 8px);
+  padding: var(--rh-space-md, 8px) var(--rh-space-lg, 16px);
+  justify-content: center;
+}
 
 @keyframes animate-inline {
   from {

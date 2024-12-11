@@ -30,9 +30,9 @@ export class RhackDrawer  extends LitElement {
           aria-modal="true"
           aria-hidden=${this.open ? 'false' : 'true'}
           aria-label=${this.accessibleLabel}>
-          <slot name="header"></slot>
+          <div part="header"><slot name="header"></slot></div>
           <slot></slot>
-          <slot name="footer"></slot>
+          <div part="footer"><slot name="footer"></slot></div>
         </div>
         <div id="overlay" @click="${() => this.close()}" tabindex="-1"></div>
       </div>
