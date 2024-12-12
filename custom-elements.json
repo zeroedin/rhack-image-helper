@@ -4,60 +4,169 @@
   "modules": [
     {
       "kind": "javascript-module",
-      "path": "src/RhackImageHelper.ts",
+      "path": "src/rhack-drawer.js",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "RhackDrawer",
+          "default": "class RhackDrawer extends LitElement { constructor() { super(...arguments); this.open = false; this.accessibleLabel = ''; this.placement = 'inline-end'; this.contained = false; } static { this.styles = [styles]; } connectedCallback() { super.connectedCallback(); window.addEventListener('keydown', this.#onKeydown.bind(this)); } render() { const { placement = '', contained = '' } = this; const classes = { 'open': this.open, 'closed': !this.open, [placement]: !!placement, contained: !!contained }; return html ` <div id=\"container\" class=\"${classMap(classes)}\" ?hidden=\"${!this.open}\"> <div id=\"panel\" tabindex=\"0\" role=\"dialog\" aria-modal=\"true\" aria-hidden=${this.open ? 'false' : 'true'} aria-label=${this.accessibleLabel}> <rh-button id=\"close-btn\" @click=${() => this.close()}> <rh-icon icon=\"close\" set=\"ui\" aria-label=\"Close\"></rh-icon> </rh-button> <div part=\"header\"><slot name=\"header\"></slot></div> <slot></slot> <div part=\"footer\"><slot name=\"footer\"></slot></div> </div> <div id=\"overlay\" @click=\"${() => this.close()}\" tabindex=\"-1\"></div> </div> `; } close() { this.open = false; } #onKeydown(event) { switch (event.key) { case 'Escape': { if (!this.open) { return; } this.close(); break; } default: break; } } }"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RhackDrawer",
+          "declaration": {
+            "name": "RhackDrawer",
+            "module": "src/rhack-drawer.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/rhack-drawer.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "RhackImageHelper",
+          "name": "RhackDrawer",
           "members": [
             {
               "kind": "field",
-              "name": "header",
+              "name": "open",
               "type": {
-                "text": "string"
+                "text": "boolean"
               },
-              "default": "'Hey there'",
-              "attribute": "header"
+              "default": "false",
+              "attribute": "open",
+              "reflects": true
             },
             {
               "kind": "field",
-              "name": "counter",
+              "name": "accessibleLabel",
               "type": {
-                "text": "number"
+                "text": "string"
               },
-              "default": "5",
-              "attribute": "counter"
+              "default": "''",
+              "attribute": "accessible-label",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "placement",
+              "type": {
+                "text": "'block-start' | 'block-end' | 'inline-start' | 'inline-end'"
+              },
+              "default": "'inline-end'",
+              "attribute": "placement",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "contained",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "contained",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "_closeBtn",
+              "type": {
+                "text": "HTMLElement"
+              },
+              "privacy": "private"
             },
             {
               "kind": "method",
-              "name": "__increment"
+              "name": "close"
+            },
+            {
+              "kind": "method",
+              "name": "#onKeydown",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ]
             }
           ],
           "attributes": [
             {
-              "name": "header",
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "open"
+            },
+            {
+              "name": "accessible-label",
               "type": {
                 "text": "string"
               },
-              "default": "'Hey there'",
-              "fieldName": "header"
+              "default": "''",
+              "fieldName": "accessibleLabel"
             },
             {
-              "name": "counter",
+              "name": "placement",
               "type": {
-                "text": "number"
+                "text": "'block-start' | 'block-end' | 'inline-start' | 'inline-end'"
               },
-              "default": "5",
-              "fieldName": "counter"
+              "default": "'inline-end'",
+              "fieldName": "placement"
+            },
+            {
+              "name": "contained",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "contained"
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "rhack-image-helper",
+          "tagName": "rhack-drawer",
           "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RhackDrawer",
+          "declaration": {
+            "name": "RhackDrawer",
+            "module": "src/rhack-drawer.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "rhack-drawer",
+          "declaration": {
+            "name": "RhackDrawer",
+            "module": "src/rhack-drawer.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/rhack-image-helper.js",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "RhackImageHelper",
+          "default": "class RhackImageHelper extends LitElement { static { this.styles = [styles]; } #response; #connection = false; #socket; #loading = false; #waitMessage = 'Loading...'; /** * Representation of the page html textContent as a deduped string */ #content = null; #showTranslate = false; #showImageOptions = false; #showCustom = false; get #promptSelect() { return this.shadowRoot?.querySelector('#prompts'); } get #textArea() { return this.shadowRoot?.querySelector('#askAnything'); } get #languageSelect() { return this.shadowRoot?.querySelector('#language'); } get #languageTextArea() { return this.shadowRoot?.querySelector('#languageContent'); } get #imagePrompt() { return this.shadowRoot?.querySelector('#imagePrompt'); } get #imageSize() { return this.shadowRoot?.querySelector('#imageSize'); } get #imageQuality() { return this.shadowRoot?.querySelector('#imageQuality'); } connectedCallback() { super.connectedCallback(); this.#socket = new WebSocket('wss://7w4j1v3rz7.execute-api.us-east-1.amazonaws.com/production/'); this.#socket.addEventListener('open', this.#socketOpen.bind(this)); this.#socket.addEventListener('close', this.#socketClosed.bind(this)); this.#socket.addEventListener('message', this.#socketMessage.bind(this)); } disconnectedCallback() { this.#socket?.removeEventListener('open', this.#socketOpen); this.#socket?.removeEventListener('close', this.#socketClosed); this.#socket?.removeEventListener('message', this.#socketMessage); } render() { return html ` <rh-button @click=${() => this.toggle()} aria-expanded=\"false\" aria-controls=\"drawer\" icon=\"ai-ml\" icon-set=\"standard\"> Help </rh-button> <rhack-drawer id=\"drawer\"> <rh-icon slot=\"header\" icon=\"ai-ml\"></rh-icon> <h2 slot=\"header\"> How can I help?</h2> <details name=\"ai-suggest\" id=\"title\"> <summary>Suggest Page Title</summary> <div> <rh-button @click=${() => this.#query('title', 'page')}>Read Page</rh-button> <p>Select a specific content region</p> <rh-button id=\"title-dialog-trigger\">Content Region</rh-button> <rh-dialog trigger=\"title-dialog-trigger\"> Some interface for selecting content regions on page </rh-dialog> </div> </details> <details name=\"ai-suggest\" id=\"summary\"> <summary>Suggest Page Summary</summary> <div> <rh-button @click=${() => this.#query('summary', 'page')}>Read Page</rh-button> <p>Select a specific content region</p> <rh-button id=\"summary-dialog-trigger\">Content Region</rh-button> <rh-dialog trigger=\"summary-dialog-trigger\"> Some interface for selecting content regions on page </rh-dialog> </div> </details> <details name=\"ai-suggest\" id=\"taxonomy\"> <summary>Suggest Taxonomy</summary> <div> <rh-button @click=${() => this.#query('taxonomy', 'page')}>Read Page</rh-button> <p>Select a specific content region</p> <rh-button id=\"taxonomy-dialog-trigger\">Content Region</rh-button> <rh-dialog trigger=\"taxonomy-dialog-trigger\"> Some interface for selecting content regions on page </rh-dialog> </div> </details> <details name=\"ai-suggest\" id=\"image\"> <summary>Generate Image</summary> <div> <textarea rows=\"10\" placeholder=\"Add a custom prompt.\\n\\nExample: An image of a user standing at a desktop computer analyzing chart data in line art design using only 4 colors, white, black, red, and grey.\"></textarea> <rh-button @click=${() => this.#imageGenerate}>Generate</rh-button> <p>Select a specific content region</p> <rh-button id=\"image-dialog-trigger\">Content Region</rh-button> <rh-dialog trigger=\"image-dialog-trigger\"> Some interface for selecting content regions on page </rh-dialog> </div> </details> <details name=\"ai-suggest\" id=\"translate\"> <summary>Translate</summary> <div> <label for=\"language\">Select language to translate to</label> <select id=\"language\" ?disabled=\"${this.#loading}\"> <option value=\"\">Select an option</option> <option value=\"Chinese\">Chinese</option> <option value=\"French\">French</option> <option value=\"German\">German</option> <option value=\"Italian\">Italian</option> <option value=\"Japanese\">Japanese</option> <option value=\"Korean\">Korean</option> <option value=\"Spanish\">Spanish</option> </select> <label for=\"content\">Copy Text to translate</label> <textarea id=\"content\" rows=\"10\" placeholder=\"Copy text to translate\"></textarea> <rh-button @click=${() => this.#query('translate', 'page')}>Translate</rh-button> <p>Select a specific content region</p> <rh-button id=\"translate-dialog-trigger\">Content Region</rh-button> <rh-dialog trigger=\"translate-dialog-trigger\"> Some interface for selecting content regions on page </rh-dialog> </div> </details> </rhack-drawer> `; } toggle() { this.drawer.open = !this.drawer.open; this.trigger.ariaExpanded = String(this.drawer.open); } #socketOpen() { this.#connection = true; this.requestUpdate(); const ping = JSON.stringify({ action: 'ping' }); // set an interval of pings to keep connection alive setInterval(() => { if (this.#connection) { this.#socket?.send(ping); } }, 30000); } #socketClosed(event) { // TODO: handle close of connection, add a reconnect feature? console.log('connection closed', event); } #socketMessage(event) { if (Object.keys(JSON.parse(event.data)).length === 0) { return; } this.#updateResponse(event); } #query(type, content) { switch (type) { case 'image': break; case 'translate': break; case 'taxonomy': break; case 'summary': break; case 'title': if (content === 'page') { // TODO: read page content return only text as engineered prompt const pageContent = this.#readPage(); // TODO: engineer prompt const prompt = this.#titlePrompt(pageContent); this.#request(prompt); } break; } } #imageGenerate() { // TODO: link up API to generate image console.log('generate image'); } #readPage() { console.log('hand wave reading the page content'); const content = 'some content here'; return content; } #titlePrompt(content) { console.log('engineer title prompt', content); const prompt = `Using the following content summarize into an easy to read and short title that optimizes for SEO and users to decern the page content. ${content}`; return prompt; } #request(prompt) { console.log(prompt); // TODO: implement API call } #updateResponse(event) { this.#parseData(event.data); } #parseData(eventData) { try { const data = JSON.parse(eventData); if (data.error) { // TODO: handle error returned as data console.log('some error', data.error); return; } if (data instanceof Array) { // we need to concatenate the response if it returns as an array. const content = []; data.forEach(item => { content.push(`<p>${item.revised_prompt}</p><img src=\"${item.url}\" alt=\"${item.revised_prompt}\" />`); }); } } catch (error) { // TODO: real error catching response console.log('error parsing response', error); } } }"
         }
       ],
       "exports": [
@@ -66,22 +175,7 @@
           "name": "RhackImageHelper",
           "declaration": {
             "name": "RhackImageHelper",
-            "module": "src/RhackImageHelper.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/index.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "RhackImageHelper",
-          "declaration": {
-            "name": "RhackImageHelper",
-            "module": "./RhackImageHelper.js"
+            "module": "src/rhack-image-helper.js"
           }
         }
       ]
@@ -89,21 +183,6 @@
     {
       "kind": "javascript-module",
       "path": "src/rhack-image-helper.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "custom-element-definition",
-          "name": "rhack-image-helper",
-          "declaration": {
-            "name": "RhackImageHelper",
-            "module": "/src/RhackImageHelper.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "dist/src/RhackImageHelper.js",
       "declarations": [
         {
           "kind": "class",
@@ -111,24 +190,309 @@
           "name": "RhackImageHelper",
           "members": [
             {
-              "kind": "method",
-              "name": "__increment"
+              "kind": "field",
+              "name": "#response",
+              "privacy": "private",
+              "type": {
+                "text": "string | undefined"
+              }
             },
             {
               "kind": "field",
-              "name": "header",
+              "name": "#connection",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#socket",
+              "privacy": "private",
+              "type": {
+                "text": "WebSocket | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#loading",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#waitMessage",
+              "privacy": "private",
               "type": {
                 "text": "string"
               },
-              "default": "'Hey there'"
+              "default": "'Loading...'"
             },
             {
               "kind": "field",
-              "name": "counter",
+              "name": "#content",
+              "privacy": "private",
               "type": {
-                "text": "number"
+                "text": "string | null"
               },
-              "default": "5"
+              "default": "null",
+              "description": "Representation of the page html textContent as a deduped string"
+            },
+            {
+              "kind": "field",
+              "name": "#showTranslate",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#showImageOptions",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#showCustom",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "endpoint",
+              "type": {
+                "text": "string | undefined"
+              },
+              "attribute": "endpoint"
+            },
+            {
+              "kind": "field",
+              "name": "apiKey",
+              "type": {
+                "text": "string | undefined"
+              },
+              "attribute": "apiKey"
+            },
+            {
+              "kind": "field",
+              "name": "drawer",
+              "type": {
+                "text": "RhackDrawer"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "trigger",
+              "type": {
+                "text": "RhackDrawer"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#promptSelect",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLSelectElement | undefined"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "#textArea",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLTextAreaElement | undefined"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "#languageSelect",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLSelectElement | undefined"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "#languageTextArea",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLTextAreaElement | undefined"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "#imagePrompt",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLTextAreaElement | undefined"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "#imageSize",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLSelectElement | undefined"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "#imageQuality",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLSelectElement | undefined"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "toggle"
+            },
+            {
+              "kind": "method",
+              "name": "#socketOpen",
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "#socketClosed",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "CloseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "#socketMessage",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MessageEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "#query",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "type",
+                  "type": {
+                    "text": "'image' | 'translate' | 'taxonomy' | 'summary' | 'title'"
+                  }
+                },
+                {
+                  "name": "content",
+                  "type": {
+                    "text": "'page' | 'region'"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "#imageGenerate",
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "#readPage",
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "#titlePrompt",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "content",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "#request",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "prompt",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "#updateResponse",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MessageEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "#parseData",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "eventData",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            }
+          ],
+          "attributes": [
+            {
+              "name": "endpoint",
+              "type": {
+                "text": "string | undefined"
+              },
+              "fieldName": "endpoint"
+            },
+            {
+              "name": "apiKey",
+              "type": {
+                "text": "string | undefined"
+              },
+              "fieldName": "apiKey"
             }
           ],
           "superclass": {
@@ -145,37 +509,15 @@
           "name": "RhackImageHelper",
           "declaration": {
             "name": "RhackImageHelper",
-            "module": "dist/src/RhackImageHelper.js"
+            "module": "src/rhack-image-helper.ts"
           }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "dist/src/index.js",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "RhackImageHelper",
-          "declaration": {
-            "name": "RhackImageHelper",
-            "module": "./RhackImageHelper.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "dist/src/rhack-image-helper.js",
-      "declarations": [],
-      "exports": [
+        },
         {
           "kind": "custom-element-definition",
           "name": "rhack-image-helper",
           "declaration": {
             "name": "RhackImageHelper",
-            "module": "/dist/src/RhackImageHelper.js"
+            "module": "src/rhack-image-helper.ts"
           }
         }
       ]
