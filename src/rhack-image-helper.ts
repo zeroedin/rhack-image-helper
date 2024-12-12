@@ -12,7 +12,6 @@ import './rhack-drawer.js';
 import styles from './rhack-image-helper.css';
 import { RhackDrawer } from './rhack-drawer.js';
 
-
 export interface WebSocketInterface {
   action: string;
   body: string;
@@ -24,6 +23,26 @@ export interface WebSocketInterface {
 @customElement('rhack-image-helper')
 export class RhackImageHelper extends LitElement {
   static styles = [styles];
+
+  static stringify(
+    action: string,
+    content: string,
+  ): string {
+    const data: WebSocketInterface = {
+      action: `${action}`,
+      body: `${content}`,
+    };
+    return JSON.stringify(data);
+  }
+
+  static isJsonString(content: string) {
+    try {
+      JSON.parse(content);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
 
   #response: string | undefined;
 
@@ -53,6 +72,8 @@ export class RhackImageHelper extends LitElement {
   @query('rhack-drawer') drawer!: RhackDrawer;
 
   @query('rh-button') trigger!: RhackDrawer;
+
+  @query('#output') output!: any;
 
   get #promptSelect(): HTMLSelectElement | undefined {
     return this.shadowRoot?.querySelector('#prompts') as
@@ -126,6 +147,7 @@ export class RhackImageHelper extends LitElement {
           <summary>Suggest Page Title</summary>
           <div>
             <rh-button @click=${() => this.#query('title', 'page')}>Read Page</rh-button>
+            <div class="output"></div>
             <p>Select a specific content region</p>
             <rh-button id="title-dialog-trigger">Content Region</rh-button>
             <rh-dialog trigger="title-dialog-trigger">
@@ -137,6 +159,7 @@ export class RhackImageHelper extends LitElement {
           <summary>Suggest Page Summary</summary>
           <div>
             <rh-button @click=${() => this.#query('summary', 'page')}>Read Page</rh-button>
+            <div class="output"></div>
             <p>Select a specific content region</p>
             <rh-button id="summary-dialog-trigger">Content Region</rh-button>
             <rh-dialog trigger="summary-dialog-trigger">
@@ -148,6 +171,7 @@ export class RhackImageHelper extends LitElement {
           <summary>Suggest Taxonomy</summary>
           <div>
             <rh-button @click=${() => this.#query('taxonomy', 'page')}>Read Page</rh-button>
+            <div class="output"></div>
             <p>Select a specific content region</p>
             <rh-button id="taxonomy-dialog-trigger">Content Region</rh-button>
             <rh-dialog trigger="taxonomy-dialog-trigger">
@@ -161,6 +185,7 @@ export class RhackImageHelper extends LitElement {
             <textarea rows="10" placeholder="Add a custom prompt.\n\nExample: An image of a user standing at a desktop computer analyzing chart data in line art design using only 4 colors, white, black, red, and grey."></textarea>
             <rh-button @click=${() => this.#imageGenerate}>Generate</rh-button>
             <p>Select a specific content region</p>
+            <div class="output"></div>
             <rh-button id="image-dialog-trigger">Content Region</rh-button>
             <rh-dialog trigger="image-dialog-trigger">
               Some interface for selecting content regions on page
@@ -192,6 +217,7 @@ export class RhackImageHelper extends LitElement {
           </div>
         </details>
       </rhack-drawer>
+      <rh-dialog id="output"></rh-dialog>
     `;
   }
 
@@ -218,9 +244,6 @@ export class RhackImageHelper extends LitElement {
   }
 
   #socketMessage(event: MessageEvent) {
-    if (Object.keys(JSON.parse(event.data)).length === 0) {
-      return;
-    }
     this.#updateResponse(event);
   }
 
@@ -254,50 +277,36 @@ export class RhackImageHelper extends LitElement {
 
   #readPage() {
     console.log('hand wave reading the page content');
-    const content = 'some content here'
+    const content = document.querySelector('#editor')?.textContent ?? '';
+    console.log('the content', content);
     return content;
   }
 
   #titlePrompt(content: string) {
     console.log('engineer title prompt', content);
-    const prompt = `Using the following content summarize into an easy to read and short title that optimizes for SEO and users to decern the page content.  ${content}`
+    const prompt = `
+      Using the following content summarize into an easy to read and short title that optimizes for SEO
+      and users to decern the page content.  ${content}`;
     return prompt;
   }
 
   #request(prompt: string) {
     console.log(prompt);
     // TODO: implement API call
+    const data = RhackImageHelper.stringify('sendMessage', prompt);
+    this.#socket?.send(data);
   }
 
   #updateResponse(event: MessageEvent) {
-    this.#parseData(event.data);
-  }
-
-  #parseData(eventData: string) {
-    try {
-      const data = JSON.parse(eventData);
-      if (data.error) {
-        // TODO: handle error returned as data
-        console.log('some error', data.error);
-        return;
-      }
-
-      if (data instanceof Array) {
-        // we need to concatenate the response if it returns as an array.
-        const content: string[] = [];
-        data.forEach(item => {
-          content.push(
-            `<p>${item.revised_prompt}</p><img src="${item.url}" alt="${item.revised_prompt}" />`
-          );
-        });
-      }
-
-    } catch (error) {
-      // TODO: real error catching response
-      console.log('error parsing response', error);
+    if (RhackImageHelper.isJsonString(event.data)) {
+      // TODO: what to do with objects? likely empty pings responses
+      return;
+    } else {
+      const html = event.data as string;
+      console.log(this.output);
+      this.output.open = true;
+      this.output.innerHTML = html;
     }
-
-
   }
 }
 

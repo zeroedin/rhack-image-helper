@@ -72,6 +72,14 @@ details[open]::details-content {
   padding-block-end: var(--rh-space-lg, 16px);
 }
 
+.output {
+  display: none;
+
+  :not(:empty) {
+    display: block;
+  }
+}
+
 textarea {
   width: calc(100% - 0.5rem * 2);
   padding: 0.5rem /* non standard 8px on a 16px base rem*/
