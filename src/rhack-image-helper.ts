@@ -4,6 +4,7 @@ import { property } from 'lit/decorators/property.js';
 import { query } from 'lit/decorators/query.js';
 
 import '@rhds/elements/rh-button/rh-button.js';
+import '@rhds/elements/rh-dialog/rh-dialog.js';
 import '@rhds/elements/rh-icon/rh-icon.js';
 
 import './rhack-drawer.js';
@@ -126,7 +127,10 @@ export class RhackImageHelper extends LitElement {
           <div>
             <rh-button @click=${() => this.#query('title')}>Read Page</rh-button>
             <p>Select a specific content region</p>
-            <rh-button>Content Region</rh-button>
+            <rh-button id="title-dialog-trigger">Content Region</rh-button>
+            <rh-dialog trigger="title-dialog-trigger">
+              Some interface for selecting content regions on page
+            </rh-dialog>
           </div>
         </details>
         <details name="ai-suggest" id="summary">
@@ -134,7 +138,10 @@ export class RhackImageHelper extends LitElement {
           <div>
             <rh-button @click=${() => this.#query('summary')}>Read Page</rh-button>
             <p>Select a specific content region</p>
-            <rh-button>Content Region</rh-button>
+            <rh-button id="summary-dialog-trigger">Content Region</rh-button>
+            <rh-dialog trigger="summary-dialog-trigger">
+              Some interface for selecting content regions on page
+            </rh-dialog>
           </div>
         </details>
         <details name="ai-suggest" id="taxonomy">
@@ -142,7 +149,10 @@ export class RhackImageHelper extends LitElement {
           <div>
             <rh-button @click=${() => this.#query('taxonomy')}>Read Page</rh-button>
             <p>Select a specific content region</p>
-            <rh-button>Content Region</rh-button>
+            <rh-button id="taxonomy-dialog-trigger">Content Region</rh-button>
+            <rh-dialog trigger="taxonomy-dialog-trigger">
+              Some interface for selecting content regions on page
+            </rh-dialog>
           </div>
         </details>
         <details name="ai-suggest" id="image">
@@ -151,28 +161,34 @@ export class RhackImageHelper extends LitElement {
             <textarea rows="10" placeholder="Add a custom prompt.\n\nExample: An image of a user standing at a desktop computer analyzing chart data in line art design using only 4 colors, white, black, red, and grey."></textarea>
             <rh-button @click=${() => this.#query('image')}>Generate</rh-button>
             <p>Select a specific content region</p>
-            <rh-button>Content Region</rh-button>
+            <rh-button id="image-dialog-trigger">Content Region</rh-button>
+            <rh-dialog trigger="image-dialog-trigger">
+              Some interface for selecting content regions on page
+            </rh-dialog>
           </div>
         </details>
         <details name="ai-suggest" id="translate">
           <summary>Translate</summary>
           <div>
-            <form>
-              <label for="language">Select language to translate to</label>
-              <select id="language" ?disabled="${this.#loading}">
-                <option value="">Select an option</option>
-                <option value="Chinese">Chinese</option>
-                <option value="French">French</option>
-                <option value="German">German</option>
-                <option value="Italian">Italian</option>
-                <option value="Japanese">Japanese</option>
-                <option value="Korean">Korean</option>
-                <option value="Spanish">Spanish</option>
-              </select>
-              <label for="content">Copy Text to translate</label>
-              <textarea id="content" rows="10" placeholder="Copy text to translate"></textarea>
-              <rh-button @click=${() => this.#query('translate')}>Translate</rh-button>
-            </form>
+            <label for="language">Select language to translate to</label>
+            <select id="language" ?disabled="${this.#loading}">
+              <option value="">Select an option</option>
+              <option value="Chinese">Chinese</option>
+              <option value="French">French</option>
+              <option value="German">German</option>
+              <option value="Italian">Italian</option>
+              <option value="Japanese">Japanese</option>
+              <option value="Korean">Korean</option>
+              <option value="Spanish">Spanish</option>
+            </select>
+            <label for="content">Copy Text to translate</label>
+            <textarea id="content" rows="10" placeholder="Copy text to translate"></textarea>
+            <rh-button @click=${() => this.#query('translate')}>Translate</rh-button>
+            <p>Select a specific content region</p>
+            <rh-button id="translate-dialog-trigger">Content Region</rh-button>
+            <rh-dialog trigger="translate-dialog-trigger">
+                Some interface for selecting content regions on page
+            </rh-dialog>
           </div>
         </details>
       </rhack-drawer>
@@ -203,6 +219,10 @@ export class RhackImageHelper extends LitElement {
 
   #socketMessage(event: MessageEvent) {
     console.log('message received');
+    if (!event.data) {
+      console.log('empty data');
+      return;
+    }
     this.#updateResponse(event);
   }
 

@@ -76,22 +76,20 @@ textarea {
   padding: 0.5rem /* non standard 8px on a 16px base rem*/
 }
 
-#translate form {
-  display: flex;
-  gap: var(--rh-space-md, 8px);
-  flex-direction: column;
+#translate label {
+  display: block;
 }
 
 @keyframes pulse {
   0% {
-      transform: scale(1);
+    transform: scale(1);
   }
 
   50% {
-      transform: scale(1.1);
+    transform: scale(1.1);
   }
 
   100% {
-      transform: scale(1);
+    transform: scale(1);
   }
 }
