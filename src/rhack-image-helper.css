@@ -69,7 +69,7 @@ details[open] > summary:before {
 
 details[open] > div,
 details[open]::details-content {
-  padding-block: var(--rh-space-lg, 16px);
+  padding-block-end: var(--rh-space-lg, 16px);
 }
 
 textarea {
