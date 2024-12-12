@@ -125,7 +125,7 @@ export class RhackImageHelper extends LitElement {
         <details name="ai-suggest" id="title">
           <summary>Suggest Page Title</summary>
           <div>
-            <rh-button @click=${() => this.#query('title')}>Read Page</rh-button>
+            <rh-button @click=${() => this.#query('title', 'page')}>Read Page</rh-button>
             <p>Select a specific content region</p>
             <rh-button id="title-dialog-trigger">Content Region</rh-button>
             <rh-dialog trigger="title-dialog-trigger">
@@ -136,7 +136,7 @@ export class RhackImageHelper extends LitElement {
         <details name="ai-suggest" id="summary">
           <summary>Suggest Page Summary</summary>
           <div>
-            <rh-button @click=${() => this.#query('summary')}>Read Page</rh-button>
+            <rh-button @click=${() => this.#query('summary', 'page')}>Read Page</rh-button>
             <p>Select a specific content region</p>
             <rh-button id="summary-dialog-trigger">Content Region</rh-button>
             <rh-dialog trigger="summary-dialog-trigger">
@@ -147,7 +147,7 @@ export class RhackImageHelper extends LitElement {
         <details name="ai-suggest" id="taxonomy">
           <summary>Suggest Taxonomy</summary>
           <div>
-            <rh-button @click=${() => this.#query('taxonomy')}>Read Page</rh-button>
+            <rh-button @click=${() => this.#query('taxonomy', 'page')}>Read Page</rh-button>
             <p>Select a specific content region</p>
             <rh-button id="taxonomy-dialog-trigger">Content Region</rh-button>
             <rh-dialog trigger="taxonomy-dialog-trigger">
@@ -159,7 +159,7 @@ export class RhackImageHelper extends LitElement {
           <summary>Generate Image</summary>
           <div>
             <textarea rows="10" placeholder="Add a custom prompt.\n\nExample: An image of a user standing at a desktop computer analyzing chart data in line art design using only 4 colors, white, black, red, and grey."></textarea>
-            <rh-button @click=${() => this.#query('image')}>Generate</rh-button>
+            <rh-button @click=${() => this.#imageGenerate}>Generate</rh-button>
             <p>Select a specific content region</p>
             <rh-button id="image-dialog-trigger">Content Region</rh-button>
             <rh-dialog trigger="image-dialog-trigger">
@@ -183,7 +183,7 @@ export class RhackImageHelper extends LitElement {
             </select>
             <label for="content">Copy Text to translate</label>
             <textarea id="content" rows="10" placeholder="Copy text to translate"></textarea>
-            <rh-button @click=${() => this.#query('translate')}>Translate</rh-button>
+            <rh-button @click=${() => this.#query('translate', 'page')}>Translate</rh-button>
             <p>Select a specific content region</p>
             <rh-button id="translate-dialog-trigger">Content Region</rh-button>
             <rh-dialog trigger="translate-dialog-trigger">
@@ -218,21 +218,86 @@ export class RhackImageHelper extends LitElement {
   }
 
   #socketMessage(event: MessageEvent) {
-    console.log('message received');
-    if (!event.data) {
-      console.log('empty data');
+    if (Object.keys(JSON.parse(event.data)).length === 0) {
       return;
     }
     this.#updateResponse(event);
   }
 
-  #query(type: 'image' | 'translate' | 'taxonomy' | 'summary' | 'title') {
-    console.log(type);
+  #query(type: 'image' | 'translate' | 'taxonomy' | 'summary' | 'title', content: 'page' | 'region') {
+    switch(type) {
+      case 'image':
+       break;
+      case 'translate':
+       break;
+      case 'taxonomy':
+       break;
+      case 'summary':
+       break;
+      case 'title':
+        if (content === 'page') {
+          // TODO: read page content return only text as engineered prompt
+          const pageContent = this.#readPage();
+          // TODO: engineer prompt
+          const prompt = this.#titlePrompt(pageContent);
+          this.#request(prompt);
+
+        }
+       break;
+    }
+  }
+
+  #imageGenerate() {
+    // TODO: link up API to generate image
+    console.log('generate image')
+  }
+
+  #readPage() {
+    console.log('hand wave reading the page content');
+    const content = 'some content here'
+    return content;
+  }
+
+  #titlePrompt(content: string) {
+    console.log('engineer title prompt', content);
+    const prompt = `Using the following content summarize into an easy to read and short title that optimizes for SEO and users to decern the page content.  ${content}`
+    return prompt;
+  }
+
+  #request(prompt: string) {
+    console.log(prompt);
+    // TODO: implement API call
   }
 
   #updateResponse(event: MessageEvent) {
-    console.log(event);
-    console.log(event.data);
+    this.#parseData(event.data);
+  }
+
+  #parseData(eventData: string) {
+    try {
+      const data = JSON.parse(eventData);
+      if (data.error) {
+        // TODO: handle error returned as data
+        console.log('some error', data.error);
+        return;
+      }
+
+      if (data instanceof Array) {
+        // we need to concatenate the response if it returns as an array.
+        const content: string[] = [];
+        data.forEach(item => {
+          content.push(
+            `<p>${item.revised_prompt}</p><img src="${item.url}" alt="${item.revised_prompt}" />`
+          );
+        });
+      }
+
+    } catch (error) {
+      // TODO: real error catching response
+      console.log('error parsing response', error);
+    }
+
+
   }
 }
 

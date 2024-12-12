@@ -67,8 +67,9 @@ details[open] > summary:before {
   transform: rotate(90deg);
 }
 
+details[open] > div,
 details[open]::details-content {
-  padding-block: var(--rh-space-lg, 16px) var(--rh-space-2xl, 32px);
+  padding-block: var(--rh-space-lg, 16px);
 }
 
 textarea {
